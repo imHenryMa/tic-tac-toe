@@ -1,0 +1,80 @@
+:root{
+    --size-xxsmall: 0.5rem;
+    --size-xsmall: 0.75rem;
+    --size-small: 1rem;
+    --size-medium: 1.25rem;
+    --size-large: 1.5rem;
+    --size-xlarge: 1.75rem;
+    --size-xxlarge: 2rem;
+    --size-xxxlarge: 3rem;
+    --size-tic-tac-board: 10rem;
+}
+
+*{
+    border: 1px solid red;
+}
+
+body {
+    height: 100vh;
+    height: 100svh;
+    margin: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+header {
+    font-size: var(--size-xxxlarge);
+    text-align: center;
+}
+
+footer {
+    font-size: var(--size-medium);
+    text-align: center;
+}
+
+main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--size-xxxlarge);
+    gap: var(--size-xxxlarge);
+    overflow: scroll;
+}
+
+.board {
+    width:fit-content;
+    display: grid;
+    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+    gap: var(--size-medium);
+}
+
+.piece{
+    height: var(--size-tic-tac-board);
+    width: var(--size-tic-tac-board);
+    font-size: var(--size-tic-tac-board);
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    font-family: sans-serif;
+    padding: 0;
+    border: 1px solid black;
+    border-radius: var(--size-medium);
+}
+
+.game-settings, .game-score{
+    display: flex;
+    justify-content: center;
+    gap: var(--size-medium);
+    padding: var(--size-medium);
+}
+
+.options{
+    display: flex;
+    padding: var(--size-medium);
+    justify-content: space-around;
+}
