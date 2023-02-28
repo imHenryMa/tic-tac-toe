@@ -17,17 +17,25 @@
         <div class="game-settings">
             <fieldset class="player-one options">
                 <legend>Player One Options</legend>
-                <button>Human</button>
-                <button>Computer</button>
+                <button class="human">Human</button>
+                <button class="computer">Computer</button>
             </fieldset>
             <fieldset class="player-two options">
                 <legend>Player Two Options</legend>
-                <button>Human</button>
-                <button>Computer</button>
+                <button class="human">Human</button>
+                <button class="computer">Computer</button>
+            </fieldset>
+            <fieldset class="player-one score" id="hidden">
+                <legend>Player One Score</legend>
+                <div class="current-score">###</div>
+            </fieldset>
+            <fieldset class="player-two score" id="hidden">
+                <legend>Player Two Score</legend>
+                <div class="current-score">###</div>
             </fieldset>
         </div>
 
-        <div class="board">
+        <div class="board" id="hidden">
             <div class="piece" data-x="-1" data-y="1">
                 o
             </div>
@@ -52,25 +60,22 @@
             <div class="piece" data-x="0" data-y="-1">
 
             </div>
-            <div class="piece" data-x="-1" data-y="-1">
+            <div class="piece" data-x="1" data-y="-1">
                 x
             </div>
-        </div>
-
-        <div class="game-score">
-            <fieldset class="player-one score">
-                <legend>Player One Score</legend>
-                ###
-            </fieldset>
-            <fieldset class="player-two score">
-                <legend>Player Two Score</legend>
-                ###
-            </fieldset>
         </div>
     </main>
 
     <footer>
         Created by imHenryMa
     </footer>
+
+    <div class="pop-up game-end" id="hidden">
+        <div class="msg">### Has won!</div>
+        <fieldset class="game-end-options">
+            <button class="next">Next Round</button>
+            <button class="restart">Restart</button>
+        </fieldset>
+    </div>
 </body>
 </html>
