@@ -52,6 +52,8 @@ main {
     display: grid;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
     gap: var(--size-medium);
+    background-color: #AAAAAA;
+    border: none;
 }
 
 .piece{
@@ -61,10 +63,11 @@ main {
     display: grid;
     align-content: center;
     justify-content: center;
+    text-align: center;
     font-family: sans-serif;
     padding: 0;
     border: 1px solid black;
-    border-radius: var(--size-medium);
+    border: none
 }
 
 .game-settings, .game-score{

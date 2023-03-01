@@ -86,6 +86,7 @@ const Player = (name) => {
 //Object to manage the logic of the game
 const GAME = (() =>{
   const players = [];
+  let currentPlayer;
 
   //Initial buttons for setting up the game and selecting player type
   PLAYER_OPTIONS.forEach((player, index) =>{
@@ -117,7 +118,6 @@ const GAME = (() =>{
 
         //Sets the player as a human
         let p = Player(nameBox.value);
-        console.log(p);
         p.setHuman(true);
         players[index] = p;
 
@@ -169,7 +169,8 @@ const GAME = (() =>{
   );
 
   //Hooking up behaviour of restart button
-  BUTTON_RESTART.addEventListener('click',Restart);
+  BUTTON_RESTART.addEventListener('click',Restart());
+
 
   function Start(){
     console.log('Starting');
@@ -188,10 +189,13 @@ const GAME = (() =>{
     //Set the name of player one to the actual player
     PLAYER_SCORES[0].children[0].textContent = `${players[0].name}'s Score`;
     PLAYER_SCORES[1].children[0].textContent = `${players[1].name}'s Score`;
+
+    //Set current player as first person
+    GAME.currentPlayer = 0;
   }
 
   function Restart(){
-    console.log('Restarting');
+    console.log('Resetting game to default state');
     /*Set the page back to default:
     --Clear the players array
     --Hide the grid
@@ -228,24 +232,44 @@ const GAME = (() =>{
     BOARD.setAttribute('id','hidden');
   }
 
+  const restartGame = Restart;
+
   return{
     players,
+    currentPlayer,
+    restartGame,
   };
 })();
 
 //Object to keep track of and lay pieces on the board
 const Board = (() =>{
-  const pieces = [];
+  const pieces = [[],[],[]];
 
+  //Hooking up behaviour of each individual grid item
+  [...BOARD.children].forEach((piece) =>{
+      piece.addEventListener('click',
+      () => {
+        addPiece(piece.getAttribute('data-x'),piece.getAttribute('data-y'),piece,GAME.currentPlayer);
+      })
+  });
   
-  
+  function addPiece(x,y,piece,index){
+    console.log(`Current player is ${GAME.currentPlayer}`);
+    console.log(`Clicked on button with x:${x} and y:${y}`);
+
+    piece.textContent = GAME.currentPlayer == 0 ? 'X' : 'O';
+    pieces[x][y] = piece.textContent;
+
+
+    console.table(pieces);
+  }
   
   return{
-
+    pieces,
   };
 })();
 
 
 
 //Call Restart as soon as page loads so that the items are always empty
-Restart();
+GAME.restartGame();
