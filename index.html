@@ -19,19 +19,34 @@
                 <legend>Player One Options</legend>
                 <button class="human">Human</button>
                 <button class="computer">Computer</button>
+                <label class="name" id="hidden">
+                    Name
+                    <input class="name" id="name" type="text" >
+                    <button class="submit">Submit</button>
+                </label>
             </fieldset>
             <fieldset class="player-two options">
                 <legend>Player Two Options</legend>
                 <button class="human">Human</button>
                 <button class="computer">Computer</button>
+                <label class="name" id="hidden">
+                    Name
+                    <input class="name" id="name" type="text" >
+                    <button class="submit">Submit</button>
+                </label>
             </fieldset>
             <fieldset class="player-one score" id="hidden">
                 <legend>Player One Score</legend>
-                <div class="current-score">###</div>
+                <div class="current-score">0</div>
             </fieldset>
             <fieldset class="player-two score" id="hidden">
                 <legend>Player Two Score</legend>
-                <div class="current-score">###</div>
+                <div class="current-score">0</div>
+            </fieldset>
+            
+            <fieldset class="controls">
+                <button class ="restart">Restart</button>
+                <button class ="start" disabled>Start</button>
             </fieldset>
         </div>
 
