@@ -62,6 +62,18 @@ const BUTTON_RESTART = document.querySelector('.restart')
 //The game-end window
 const WINDOW_GAME_END = document.querySelector('.pop-up.game-end');
 
+//Create a button listener and an event for it.
+const buttonListener = {
+  listener: document.createElement('div'),
+  event: 'buttonClicked',
+};
+
+//Listener and event for when a move is made
+const moveListener = {
+  listener: document.createElement('div'),
+  event: 'moveMade',
+};
+
 /*--------------------------------------------------------------------------------------
 Inititializing the objects for the game
 --------------------------------------------------------------------------------------*/
@@ -85,6 +97,7 @@ const Player = (name) => {
 
 //Object to manage the logic of the game
 const GAME = (() =>{
+  //
   const players = [];
   let currentPlayer;
 
@@ -160,7 +173,6 @@ const GAME = (() =>{
   //Hooking up behaviour of start button
   BUTTON_START.addEventListener('click',
   ()=>{
-
     //Check to see if enough players have been defined
     if(players.filter((x) => !(x === undefined)).length<2) return;
 
@@ -169,8 +181,93 @@ const GAME = (() =>{
   );
 
   //Hooking up behaviour of restart button
-  BUTTON_RESTART.addEventListener('click',Restart());
+  BUTTON_RESTART.addEventListener('click',Restart);
 
+
+  //Create a listener for when a cell is filled
+  const buttonCheck = document.createElement('div');
+  buttonListener.listener.appendChild(buttonCheck);
+  buttonCheck.addEventListener(buttonListener.event,
+    (event) => {
+      //Setting temporary variables so I can reference them easier
+      let dataX = event.detail.dataX;
+      let dataY = event.detail.dataY;
+      let pieces = event.detail.pieces;
+
+      //If move is invalid then return
+      if(pieces[dataX][dataY] != undefined) return;
+      
+      //Add the move to the array
+      pieces[dataX][dataY] = GAME.currentPlayer == 0 ? 'X' : 'O';
+
+      //Also dispatch an event noting that the move is valid
+      [...moveListener.listener.children].forEach(
+        (listener) => listener.dispatchEvent(
+          new CustomEvent(
+            moveListener.event,{
+              detail: {
+                dataX: dataX,
+                dataY: dataY,}})));
+
+      //Check to see if the game has ended
+      checkGameStatus({dataX, dataY}, pieces);
+
+      //Toggle next player
+      GAME.currentPlayer = +(!GAME.currentPlayer); 
+    }
+  );
+
+  function checkGameStatus(lastPiece, pieces){
+
+    //console.log('Checking game status..');
+    //console.log(`${lastPiece.dataX}, ${lastPiece.dataY}`);
+    //console.table(pieces);
+
+    let currentPieceValue = pieces[lastPiece.dataX][lastPiece.dataY];
+    let dataX = lastPiece.dataX;
+    let dataY = lastPiece.dataY;
+
+    //Check the current row to see if its three consecutive
+    let gameEnded = true;
+    for(let x = 0; x <3; x++){
+      if(pieces[x][dataY] == currentPieceValue) continue;
+      
+      gameEnded = false; //If it reaches here then the row check failed to confirm game has ended
+      break;
+    }
+    if(gameEnded) return endGame('winner');
+
+    //Check current column to see if its three consecutive
+    gameEnded = true;
+    for(let y = 0; y <3; y++){
+      if(pieces[dataX][y] == currentPieceValue) continue;
+      gameEnded = false; //If it reaches here then the row check failed to confirm game has ended
+    }
+    if(gameEnded) return endGame('winner');
+
+    //Check the diagonals if there is a piece at the center (i.e. someone can win diagonally if there is a piece in the center)
+    if(currentPieceValue == pieces[1][1]){
+      const diag1 = pieces[0][0] == pieces[1][1] && pieces[1][1] == pieces[2][2];
+      const diag2 = pieces[2][0] == pieces[1][1] && pieces[1][1] == pieces[0][2];
+      if(diag1 || diag2) return endGame('winner');
+    }
+
+    //Check to see if there's no more viable moves afterwards
+    let viableMovesLeft = false;
+    for(let i = 0; i<3; i++){
+      if(viableMovesLeft) break;
+      for(let j = 0; j<3; j++){
+        if(viableMovesLeft) break;
+        viableMovesLeft = pieces[i][j] === undefined;
+      }
+    } if(!viableMovesLeft) return endGame('draw');
+
+  }
+
+  function endGame(condition){
+    console.log(`Game ended in a ${condition}! The last player to make a move was ${GAME.currentPlayer}.`);
+    
+  }
 
   function Start(){
     console.log('Starting');
@@ -205,7 +302,9 @@ const GAME = (() =>{
     */
 
     //Clearing the player array
-    players.length = 0;
+    GAME.players.length = 0;
+    //Clearing the moves
+    Board.pieces = [[],[],[]];
 
     //Resetting the options to the default page state
     PLAYER_OPTIONS.forEach((player) => {
@@ -230,11 +329,14 @@ const GAME = (() =>{
 
     //Resetting the grid to default page state
     BOARD.setAttribute('id','hidden');
+    [...BOARD.children].forEach((piece) => {
+      piece.textContent = '';
+    });
   }
-
   const restartGame = Restart;
 
   return{
+    buttonListener,
     players,
     currentPlayer,
     restartGame,
@@ -243,32 +345,47 @@ const GAME = (() =>{
 
 //Object to keep track of and lay pieces on the board
 const Board = (() =>{
-  const pieces = [[],[],[]];
+  let pieces = [[],[],[]];
 
   //Hooking up behaviour of each individual grid item
-  [...BOARD.children].forEach((piece) =>{
-      piece.addEventListener('click',
-      () => {
-        addPiece(piece.getAttribute('data-x'),piece.getAttribute('data-y'),piece,GAME.currentPlayer);
-      })
+  [...BOARD.children].forEach((piece) =>{  
+
+    //Dispatches an event telling that this button has been clicked
+    piece.addEventListener('click',() => {pieceClicked(piece, Board.pieces);});
+
+    //Each piece will listen for when the GAME sends confirmation that a move is made correctly
+    const moveCheck = document.createElement('div');
+    moveListener.listener.appendChild(moveCheck);
+    moveCheck.addEventListener(moveListener.event,(event)=>{
+      if(event.detail.dataX == piece.getAttribute('data-x') && event.detail.dataY == piece.getAttribute('data-y'))
+      {
+        //Set either 'X' or 'O' on the board depending on who is the current player
+        setPieceValue(piece,Board.pieces[event.detail.dataX][event.detail.dataY]);
+      }
+    });
   });
-  
-  function addPiece(x,y,piece,index){
-    console.log(`Current player is ${GAME.currentPlayer}`);
-    console.log(`Clicked on button with x:${x} and y:${y}`);
 
-    piece.textContent = GAME.currentPlayer == 0 ? 'X' : 'O';
-    pieces[x][y] = piece.textContent;
-
-
-    console.table(pieces);
+  function pieceClicked(piece,pieces){
+    [...buttonListener.listener.children].forEach((listener)=>{
+      listener.dispatchEvent(new CustomEvent(buttonListener.event,
+        {
+          detail: {
+            dataX: piece.getAttribute('data-x'),
+            dataY: piece.getAttribute('data-y'),
+            pieces: pieces,
+          }
+        }));
+    });
   }
   
+  function setPieceValue(piece,value){
+    piece.textContent = value;
+  }
+
   return{
     pieces,
   };
 })();
-
 
 
 //Call Restart as soon as page loads so that the items are always empty
