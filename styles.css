@@ -86,6 +86,16 @@ main {
 }
 
 .pop-up{
+    position:fixed;
+    height: 100vh;
+    width: 100vw;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%,-50%);
+    background-color: rgba(255,255,255,0.5);
+}
+
+.game-end{
     position:absolute;
     top: 50%;
     left: 50%;
@@ -96,13 +106,19 @@ main {
     border-radius: var(--size-xxsmall);
 }
 
-.pop-up > .msg{
+.pop-up > .game-end > .msg{
     text-align: center;
+}
+
+.game-end-options{
+    display: flex;
+    gap: var(--size-medium);
+    justify-content: center;
 }
 
 .game-end-options > button{
     font-size: var(--size-xlarge);
-    padding: var(--size-medium);
+    padding: var(--size-xxsmall) var(--size-xlarge);
 }
 
 #hidden{
