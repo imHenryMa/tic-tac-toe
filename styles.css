@@ -49,6 +49,7 @@ main {
 
 .board {
     width:fit-content;
+    max-width: 100vw;
     display: grid;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
     gap: var(--size-medium);
@@ -59,6 +60,8 @@ main {
 .piece{
     height: var(--size-tic-tac-board);
     width: var(--size-tic-tac-board);
+    max-width: 30vw;
+    max-height: 30vw;
     font-size: var(--size-tic-tac-board);
     display: grid;
     align-content: center;
